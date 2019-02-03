@@ -1,0 +1,22 @@
+{
+  "name": "hasura-simple-auth",
+  "version": "1.0.0",
+  "description": "Simple Auth Server For Signup & Login Mutation",
+  "scripts": {
+    "start": "node server"
+  },
+  "keywords": [
+    "hasura",
+    "auth",
+    "graphql"
+  ],
+  "author": "DevSpeak",
+  "license": "MIT",
+  "dependencies": {
+    "apollo-server": "^2.3.3",
+    "bcryptjs": "^2.4.3",
+    "graphql": "^14.1.1",
+    "graphql-request": "^1.8.2",
+    "jsonwebtoken": "^8.4.0"
+  }
+}
