@@ -10,3 +10,10 @@ Setup
 1. npm start
 1. add url to remote schemas
    1. using docker and localhost? https://docs.hasura.io/1.0/graphql/manual/deployment/docker/index.html#network-config
+
+Mutations
+```
+login(email: String, password: String) { token }
+
+signup(email: String, password: String) { token }
+```
