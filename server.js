@@ -23,9 +23,15 @@ const SIGNUP = `
   }
 `
 
+const ME = `
+  query {
+    user(where:{id: {_eq: "e89785ce-b471-42cb-a166-ab49efe4eb1f" }}) { email }
+  }
+`
+
 const typeDefs = gql`
   type Query {
-    me: String!
+    me: User!
   }
   type Mutation {
     signup(email: String, password: String): AuthPayload!
@@ -34,12 +40,26 @@ const typeDefs = gql`
   type AuthPayload {
       token: String
   }
+  type User {
+    email: String
+  }
 `;
 
 const resolvers = {
   Query: {
-    me: () => {
-      return 'WORK IN PROGRESS'
+    me: async (_, args, req) => {
+      const Authorization = req.headers.authorization
+      if (Authorization)  {
+        const token = Authorization.replace('Bearer ','')
+        const verifiedToken = jwt.verify(token, config.JWT_SECRET)
+        const UPDATED_ME = ME.replace('e89785ce-b471-42cb-a166-ab49efe4eb1f', verifiedToken.userId) // Dirty solution until figuring out how to use UUID with variables
+        const user = await graphql.request(UPDATED_ME).then(data => {
+          return data.user[0]
+        })
+        return { ...user }
+      } else {
+        throw new Error('Not logged in.')
+      }
     }
   },
   Mutation: {
@@ -87,7 +107,13 @@ const resolvers = {
   }
 };
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) => ({
+    ...req
+  })
+ });
 
 server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`)
