@@ -24,8 +24,8 @@ const SIGNUP = `
 `
 
 const ME = `
-  query {
-    user(where:{id: {_eq: "e89785ce-b471-42cb-a166-ab49efe4eb1f" }}) { email }
+  query me($id: uuid) {
+    user(where:{id: {_eq: $id}}) { email }
   }
 `
 
@@ -52,8 +52,7 @@ const resolvers = {
       if (Authorization)  {
         const token = Authorization.replace('Bearer ','')
         const verifiedToken = jwt.verify(token, config.JWT_SECRET)
-        const UPDATED_ME = ME.replace('e89785ce-b471-42cb-a166-ab49efe4eb1f', verifiedToken.userId) // Dirty solution until figuring out how to use UUID with variables
-        const user = await graphql.request(UPDATED_ME).then(data => {
+        const user = await graphql.request(ME, { id: verifiedToken.userId }).then(data => {
           return data.user[0]
         })
         return { ...user }
