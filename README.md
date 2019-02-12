@@ -11,6 +11,7 @@ Simple Auth Server For Signup &amp; Login Mutation
 1. add required schema
 
 **Required Schema**
+Table Name: `User`
 - id (uuid)
 - email (string/text)
 - password (string/text)
