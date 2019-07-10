@@ -17,7 +17,7 @@ const typeDefs = gql`
   type User {
     email: String
   }
-`;
+`
 
 const server = new ApolloServer({
   typeDefs,
@@ -26,8 +26,8 @@ const server = new ApolloServer({
     const userId = getUserId(req)
     return { ...req, userId }
   }
- });
+})
 
 server.listen().then(({ url }) => {
   console.log(`🚀 Server ready at ${url}`)
-});
+})
