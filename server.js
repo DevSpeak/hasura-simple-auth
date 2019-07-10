@@ -3,28 +3,28 @@ const { GraphQLClient } = require('graphql-request')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
-const config = require('./config.json')
+require('dotenv').config()
 
-const graphql = new GraphQLClient(config.ENDPOINT, {
+const graphql = new GraphQLClient(process.env.ENDPOINT, {
   headers: {
-    'X-Hasura-Access-Key': config.HASURA_ACCESS_KEY
+    'X-Hasura-Admin-Secret': process.env.HASURA_ADMIN_SECRET
   }
 })
 
 const LOGIN = `
-  query user($email: String) {
+  query($email: String) {
     user(where:{email: {_eq: $email}}) { id password }
   }
 `
 
 const SIGNUP = `
-  mutation signup($email: String, $password: String) {
-    insert_user(objects: [{ email: $email, password: $password }]) { returning { id } }
+  mutation($email: String, $password: String) {
+    insert_user(objects: { email: $email, password: $password }) { returning { id }}
   }
 `
 
 const ME = `
-  query me($id: uuid) {
+  query($id: uuid) {
     user(where:{id: {_eq: $id}}) { email }
   }
 `
@@ -38,7 +38,7 @@ const typeDefs = gql`
     login(email: String, password: String): AuthPayload!
   }
   type AuthPayload {
-      token: String
+    token: String
   }
   type User {
     email: String
@@ -51,7 +51,7 @@ const resolvers = {
       const Authorization = req.headers.authorization
       if (Authorization)  {
         const token = Authorization.replace('Bearer ','')
-        const verifiedToken = jwt.verify(token, config.JWT_SECRET)
+        const verifiedToken = jwt.verify(token, process.env.JWT_SECRET)
         const user = await graphql.request(ME, { id: verifiedToken.userId }).then(data => {
           return data.user[0]
         })
@@ -64,18 +64,19 @@ const resolvers = {
   Mutation: {
     signup: async (_, { email, password }) => {
       const hashedPassword = await bcrypt.hash(password, 10)
+
       const user = await graphql.request(SIGNUP, { email, password: hashedPassword }).then(data => {
         return data.insert_user.returning[0]
       })
-
-      const token = jwt.sign({
+      
+     const token = jwt.sign({
         userId: user.id,
         "https://hasura.io/jwt/claims": {
           "x-hasura-allowed-roles": ["user"],
           "x-hasura-default-role": "user",
           "x-hasura-user-id": user.id
         }
-      }, config.JWT_SECRET)
+      }, process.env.JWT_SECRET)
 
       return { token }
     },
@@ -96,7 +97,7 @@ const resolvers = {
             "x-hasura-default-role": "user",
             "x-hasura-user-id": user.id
           }
-        }, config.JWT_SECRET)
+        }, process.env.JWT_SECRET)
 
         return { token }
       } else {

@@ -13,10 +13,11 @@
   "author": "DevSpeak",
   "license": "MIT",
   "dependencies": {
-    "apollo-server": "^2.3.3",
+    "apollo-server": "^2.6.8",
     "bcryptjs": "^2.4.3",
-    "graphql": "^14.1.1",
+    "dotenv": "^8.0.0",
+    "graphql": "^14.4.2",
     "graphql-request": "^1.8.2",
-    "jsonwebtoken": "^8.4.0"
+    "jsonwebtoken": "^8.5.1"
   }
 }
