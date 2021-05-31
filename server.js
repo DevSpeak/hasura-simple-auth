@@ -1,7 +1,6 @@
-const { ApolloServer, gql } = require('apollo-server')
-const { resolvers } = require('./resolvers')
-
-const { getUserId } = require('./utils')
+import { ApolloServer, gql } from 'apollo-server'
+import { resolvers } from './resolvers.js'
+import { getUserId } from './utils.js'
 
 const typeDefs = gql`
   type Query {

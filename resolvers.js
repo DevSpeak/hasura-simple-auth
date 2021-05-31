@@ -1,8 +1,8 @@
-const { GraphQLClient } = require('graphql-request')
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
-
-require('dotenv').config()
+import { GraphQLClient } from 'graphql-request'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import dotenv from 'dotenv'
+dotenv.config()
 
 const graphql = new GraphQLClient(process.env.ENDPOINT, {
   headers: {
@@ -28,7 +28,7 @@ const ME = `
   }
 `
 
-const resolvers = {
+export const resolvers = {
   Query: {
     me: async (_, args, req) => {
       if (req.userId) {
@@ -75,7 +75,7 @@ const resolvers = {
           'https://hasura.io/jwt/claims': {
             'x-hasura-user-id': user.id + "",
             'x-hasura-default-role': 'user',
-            'x-hasura-allowed-roles': ['user']
+            'x-hasura-allowed-roles': ['user', 'anonymous']
           }
         }, process.env.JWT_SECRET)
 
@@ -86,5 +86,3 @@ const resolvers = {
     }
   }
 }
-
-module.exports = { resolvers }

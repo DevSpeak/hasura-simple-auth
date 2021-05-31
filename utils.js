@@ -1,6 +1,7 @@
-const { verify } = require('jsonwebtoken')
+import jsonwebtoken from 'jsonwebtoken'
+const { verify } = jsonwebtoken
 
-const getUserId = (req) => {
+export const getUserId = (req) => {
   const Authorization = req.get('Authorization') || ''
   if (Authorization) {
     const token = Authorization.replace('Bearer ', '')
@@ -8,5 +9,3 @@ const getUserId = (req) => {
     return verifiedToken.userId
   }
 }
-
-module.exports = { getUserId }
