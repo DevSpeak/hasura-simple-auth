@@ -1,0 +1,7 @@
+{
+    "name": "Hasura Simple Auth Service",
+    "sidebar": [
+      ["Overview", "/"],
+      ["Getting Started", "/getting-started"]
+    ]
+  }
